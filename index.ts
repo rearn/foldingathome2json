@@ -7,7 +7,6 @@ const filenamehead = `team${conf.team}`;
 const tmpfilename = `${filenamehead}.html`;
 const jsonfilename = `${filenamehead}.json`;
 const uri = `https://apps.foldingathome.org/teamstats/${tmpfilename}`;
-const name = conf.name;
 
 (async () => {
   const isgethtml = await fs.stat(tmpfilename).then((v) => {

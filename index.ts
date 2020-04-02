@@ -24,6 +24,7 @@ const uri = `https://apps.foldingathome.org/teamstats/${tmpfilename}`;
   if (isgethtml) {
     const response = await axios.get(uri);
     html = response.data.toString()
+    fs.writeFile(tmpfilename, html);
   } else {
     const b = await fs.readFile(tmpfilename);
     html = b.toString('utf8')

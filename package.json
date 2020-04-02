@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "prestart": "npm run build",
-    "build": "tsc index.ts",
+    "prestart": "npm run build:js",
+    "build:js": "tsc index.ts",
+    "nexe": "nexe",
+    "build_exe": "npm run nexe -- index.js",
+    "prebuild_exe": "npm run build:js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -21,6 +24,7 @@
   "devDependencies": {
     "@types/argv": "0.0.4",
     "@types/jsdom": "^16.2.0",
-    "@types/node": "^13.9.8"
+    "@types/node": "^13.9.8",
+    "nexe": "^3.3.2"
   }
 }

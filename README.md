@@ -2,11 +2,7 @@
 ## 簡単な使い方
 ```sh
 npm i
-cp config_sample.json config.json
-vi config.json
-npm start
+npm start -- -t 252872
 ```
-
-# 設定ファイル
-
-`config.json` の `team` にチーム番号を記載する
+## help
+npm start -- -h

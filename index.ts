@@ -1,34 +1,37 @@
 import { promises as fs } from 'fs';
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
-const conf = require('./config.json');
+import * as argv from 'argv';
 
-const filenamehead = `team${conf.team}`; 
-const tmpfilename = `${filenamehead}.html`;
-const jsonfilename = `${filenamehead}.json`;
-const uri = `https://apps.foldingathome.org/teamstats/${tmpfilename}`;
+argv.option([
+  {
+    name: 'out',
+    short: 'o',
+    type : 'path',
+    description :'出力先',
+    example: '指定しないときは、標準出力'
+  },
+  {
+    name: 'team',
+    short: 't',
+    type : 'int',
+    description :'チーム番号',
+  },
+]);
+
+const conf = argv.run().options;
+const out = conf.out;
+const team = conf.team;
+if (team === undefined) {
+  console.log('Non team number');
+  argv.help();
+  process.exit(1);
+}
+const uri = `https://apps.foldingathome.org/teamstats/team${team}.html`;
 
 (async () => {
-  const isgethtml = await fs.stat(tmpfilename).then((v) => {
-    const now = new Date();
-    const diff = now.getTime() - v.mtime.getTime();
-    return diff > 5 * 60 * 100;
-  }).catch((error) => {
-    if (error.code === 'ENOENT') {
-      return true;
-    }
-    throw error;
-  });
-  
-  let html: string;
-  if (isgethtml) {
-    const response = await axios.get(uri);
-    html = response.data.toString()
-    fs.writeFile(tmpfilename, html);
-  } else {
-    const b = await fs.readFile(tmpfilename);
-    html = b.toString('utf8')
-  }
+  const response = await axios.get(uri);
+  const html = response.data.toString()
   const dom = new JSDOM(html);
   const window = dom.window;
   const document = window.document;
@@ -61,5 +64,9 @@ const uri = `https://apps.foldingathome.org/teamstats/${tmpfilename}`;
     }
     return r;
   });
-  await fs.writeFile(jsonfilename, JSON.stringify(ret));
+
+  if (out === undefined) {
+    return console.log(JSON.stringify(ret));
+  }
+  return await fs.writeFile(out, JSON.stringify(ret));
 })();
